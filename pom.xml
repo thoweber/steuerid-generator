@@ -5,14 +5,14 @@
 
 	<groupId>guru.thomasweber.steuerid</groupId>
 	<artifactId>steuerid-generator</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>steuerid-generator</name>
 
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sonar.projectKey>thoweber_easy-image-compressor</sonar.projectKey>
+		<sonar.projectKey>thoweber_steuerid-generator</sonar.projectKey>
 		<sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
 		<sonar.organization>thoweber</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
