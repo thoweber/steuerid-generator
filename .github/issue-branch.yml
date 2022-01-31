@@ -1,0 +1,2 @@
+# configuration for robvanderleek/create-issue-branch
+branchName: 'feature/${issue.number}-${issue.title}'
