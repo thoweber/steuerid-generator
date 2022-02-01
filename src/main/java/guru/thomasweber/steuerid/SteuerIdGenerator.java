@@ -11,7 +11,7 @@ public class SteuerIdGenerator {
 	private static final String[] DIGITS = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 	public String generate() {
-		return generate(SteuerIdMode.V2016);
+		return generate(ThreadLocalRandom.current().nextBoolean() ? SteuerIdMode.CLASSIC : SteuerIdMode.V2016);
 	}
 
 	public String generate(SteuerIdMode mode) {
@@ -22,11 +22,6 @@ public class SteuerIdGenerator {
 		idDigits.add(availableDigits.get(nextInt(9) + 1));
 		// remove first chosen digit from available digits
 		availableDigits.remove(idDigits.get(0));
-
-		// remove enough random digits to ensure uniqueness
-		while (availableDigits.size() >= mode.uniqueDigits()) {
-			availableDigits.remove(nextInt(availableDigits.size()));
-		}
 
 		// add unique digits
 		for (var i = 0; i < mode.uniqueDigits() - 1; i++) {
@@ -45,7 +40,7 @@ public class SteuerIdGenerator {
 		}
 
 		// add checksum
-		idDigits.add("C");
+		idDigits.add(checkDigit(idDigits));
 		return idDigits.stream().map(Object::toString).collect(Collectors.joining());
 	}
 
@@ -55,7 +50,7 @@ public class SteuerIdGenerator {
 		// insert the second time avoiding triplets
 		// choose an offset and then linearly tryout positions
 		int offset = nextInt(idDigits.size());
-		for (var i = 0; i < 10 && idDigits.size() < 10; i++) {
+		for (var i = 0; idDigits.size() < 10; i++) {
 			int insertPos = (offset + i) % idDigits.size();
 			// do not insert at the first position in order to avoid inserting a zero
 			if (insertPos == 0) {
@@ -78,7 +73,7 @@ public class SteuerIdGenerator {
 		return true;
 	}
 
-	String checksum(List<String> idDigits) {
+	String checkDigit(List<String> idDigits) {
 		int result = 10;
 		for (int i = 0; i < idDigits.size(); i++) {
 			int sum = (Integer.valueOf(idDigits.get(i)) + result) % 10;

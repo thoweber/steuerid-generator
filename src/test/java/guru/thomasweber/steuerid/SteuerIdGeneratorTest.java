@@ -17,9 +17,9 @@ class SteuerIdGeneratorTest {
 	@Test
 	void test_generated_id_has_11_digits() {
 		// given
-		SteuerIdGenerator generator = new SteuerIdGenerator();
+		var generator = new SteuerIdGenerator();
 		// when
-		String id = generator.generate();
+		var id = generator.generate();
 		// then
 		assertEquals(11, id.length());
 	}
@@ -27,11 +27,11 @@ class SteuerIdGeneratorTest {
 	@Test
 	void test_generated_id_does_not_start_with_zero() {
 		// given
-		SteuerIdGenerator generator = new SteuerIdGenerator();
+		var generator = new SteuerIdGenerator();
 
 		for (int i = 0; i < 10000; i++) {
 			// when
-			String id = generator.generate();
+			var id = generator.generate();
 			// then
 			assertNotEquals('0', id.charAt(0), id);
 		}
@@ -40,13 +40,13 @@ class SteuerIdGeneratorTest {
 	@Test
 	void test_generate_CLASSIC_contains_9_distinct_digits_excluding_checksum() {
 		// given
-		SteuerIdGenerator generator = new SteuerIdGenerator();
+		var generator = new SteuerIdGenerator();
 
 		for (int i = 0; i < 10000; i++) {
 			// when
-			String id = generator.generate(SteuerIdMode.CLASSIC);
+			var id = generator.generate(SteuerIdMode.CLASSIC);
 			// then
-			String idWithoutChecksum = id.substring(0, 10);
+			var idWithoutChecksum = id.substring(0, 10);
 			assertEquals(SteuerIdMode.CLASSIC.uniqueDigits(),
 					idWithoutChecksum.chars().mapToObj(String::valueOf).collect(Collectors.toSet()).size());
 		}
@@ -55,13 +55,13 @@ class SteuerIdGeneratorTest {
 	@Test
 	void test_generate_V2016_contains_8_distinct_digits_excluding_checksum() {
 		// given
-		SteuerIdGenerator generator = new SteuerIdGenerator();
+		var generator = new SteuerIdGenerator();
 
 		for (int i = 0; i < 10000; i++) {
 			// when
-			String id = generator.generate(SteuerIdMode.V2016);
+			var id = generator.generate(SteuerIdMode.V2016);
 			// then
-			String idWithoutChecksum = id.substring(0, 10);
+			var idWithoutChecksum = id.substring(0, 10);
 			assertEquals(SteuerIdMode.V2016.uniqueDigits(),
 					idWithoutChecksum.chars().mapToObj(String::valueOf).collect(Collectors.toSet()).size());
 		}
@@ -70,17 +70,31 @@ class SteuerIdGeneratorTest {
 	@Test
 	void test_generate_V2016_has_no_three_times_in_a_row_occurences() {
 		// given
-		SteuerIdGenerator generator = new SteuerIdGenerator();
+		var generator = new SteuerIdGenerator();
 
 		for (int i = 0; i < 10000; i++) {
 			// when
-			String id = generator.generate(SteuerIdMode.V2016);
+			var id = generator.generate(SteuerIdMode.V2016);
 			// then
-			String idWithoutChecksum = id.substring(0, 10);
+			var idWithoutChecksum = id.substring(0, 10);
 			for (var pos = 0; pos < 10; pos++) {
 				String triplet = idWithoutChecksum.substring(pos, pos + 1).repeat(3);
 				assertEquals(-1, idWithoutChecksum.indexOf(triplet), idWithoutChecksum);
 			}
+		}
+	}
+
+	@Test
+	void test_generated_id_ends_with_check_digit() {
+		// given
+		SteuerIdGenerator generator = new SteuerIdGenerator();
+		for (int i = 0; i < 500; i++) {
+			// when
+			String id = generator.generate(i % 2 == 0 ? SteuerIdMode.CLASSIC : SteuerIdMode.V2016);
+			// then
+			var digits = stringToList(id.substring(0, 10));
+			var computedChecksum = generator.checkDigit(digits);
+			assertEquals(computedChecksum, id.substring(10));
 		}
 	}
 
@@ -92,14 +106,19 @@ class SteuerIdGeneratorTest {
 	@MethodSource(value = "checksumValueSource")
 	void test_checksum_computes_correctly(String digitString, String checksum) {
 		// given
-		SteuerIdGenerator generator = new SteuerIdGenerator();
+		var generator = new SteuerIdGenerator();
+		// when
+		var digits = stringToList(digitString);
+		var computedChecksum = generator.checkDigit(digits);
+		assertEquals(checksum, computedChecksum);
+	}
+
+	private ArrayList<String> stringToList(String digitString) {
 		var digits = new ArrayList<String>();
 		for (int i = 0; i < digitString.length(); i++) {
 			digits.add(digitString.substring(i, i + 1));
 		}
-		// when
-		String computedChecksum = generator.checksum(digits);
-		assertEquals(checksum, computedChecksum);
+		return digits;
 	}
 
 }
