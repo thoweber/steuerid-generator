@@ -79,16 +79,6 @@ public class SteuerIdGenerator {
 	}
 
 	String checksum(List<String> idDigits) {
-//		Produkt := 10;
-//		for i := 1 to n do
-//		begin
-//		  Summe := (Zeichenkette[i] + Produkt) MOD 10;
-//		  if Summe = 0 then Summe := 10;
-//		  Produkt := (Summe * 2) MOD 11;
-//		end;
-//		(* Prüfzeichenwert berechnen *)
-//		Prüfzeichenwert := 11 - Produkt;
-//		if Prüfzeichenwert = 10 then Prüfzeichenwert := 0;
 		int result = 10;
 		for (int i = 0; i < idDigits.size(); i++) {
 			int sum = (Integer.valueOf(idDigits.get(i)) + result) % 10;
