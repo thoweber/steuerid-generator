@@ -78,7 +78,33 @@ public class SteuerIdGenerator {
 		return true;
 	}
 
-	void addClassic(List<String> idDigits, String multiOccurenceDigit) {
+	String checksum(List<String> idDigits) {
+//		Produkt := 10;
+//		for i := 1 to n do
+//		begin
+//		  Summe := (Zeichenkette[i] + Produkt) MOD 10;
+//		  if Summe = 0 then Summe := 10;
+//		  Produkt := (Summe * 2) MOD 11;
+//		end;
+//		(* Prüfzeichenwert berechnen *)
+//		Prüfzeichenwert := 11 - Produkt;
+//		if Prüfzeichenwert = 10 then Prüfzeichenwert := 0;
+		int result = 10;
+		for (int i = 0; i < idDigits.size(); i++) {
+			int sum = (Integer.valueOf(idDigits.get(i)) + result) % 10;
+			if (sum == 0) {
+				sum = 10;
+			}
+			result = (sum * 2) % 11;
+		}
+		result = 11 - result;
+		if (result == 10) {
+			result = 0;
+		}
+		return Integer.toString(result);
+	}
+
+	private void addClassic(List<String> idDigits, String multiOccurenceDigit) {
 		// insert multiOccurenceDigit anywhere after the first digit
 		idDigits.add(1 + nextInt(idDigits.size() - 1), multiOccurenceDigit);
 	}
