@@ -3,9 +3,14 @@ package guru.thomasweber.steuerid;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class SteuerIdGeneratorTest {
 
@@ -77,6 +82,24 @@ class SteuerIdGeneratorTest {
 				assertEquals(-1, idWithoutChecksum.indexOf(triplet), idWithoutChecksum);
 			}
 		}
+	}
+
+	static Stream<Arguments> checksumValueSource() {
+		return Stream.of(Arguments.of("0794", "5"));
+	}
+
+	@ParameterizedTest
+	@MethodSource(value = "checksumValueSource")
+	void test_checksum_computes_correctly(String digitString, String checksum) {
+		// given
+		SteuerIdGenerator generator = new SteuerIdGenerator();
+		var digits = new ArrayList<String>();
+		for (int i = 0; i < digitString.length(); i++) {
+			digits.add(digitString.substring(i, i + 1));
+		}
+		// when
+		String computedChecksum = generator.checksum(digits);
+		assertEquals(checksum, computedChecksum);
 	}
 
 }
