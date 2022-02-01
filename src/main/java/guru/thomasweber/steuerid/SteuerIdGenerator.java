@@ -11,7 +11,7 @@ public class SteuerIdGenerator {
 	private static final String[] DIGITS = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 	public String generate() {
-		return generate(SteuerIdMode.CLASSIC);
+		return generate(SteuerIdMode.V2016);
 	}
 
 	public String generate(SteuerIdMode mode) {
@@ -55,7 +55,7 @@ public class SteuerIdGenerator {
 		// insert the second time avoiding triplets
 		// choose an offset and then linearly tryout positions
 		int offset = nextInt(idDigits.size());
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 10 && idDigits.size() < 10; i++) {
 			int insertPos = (offset + i) % idDigits.size();
 			// do not insert at the first position in order to avoid inserting a zero
 			if (insertPos == 0) {
