@@ -1,5 +1,7 @@
 package guru.thomasweber.steuerid;
 
+import static guru.thomasweber.steuerid.Digit.digit;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,15 +10,16 @@ import java.util.stream.Collectors;
 
 public class SteuerIdGenerator {
 
-	private static final String[] DIGITS = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+	private static final Digit[] DIGITS = { digit(0), digit(1), digit(2), digit(3), digit(4), digit(5), digit(6),
+			digit(7), digit(8), digit(9) };
 
 	public String generate() {
 		return generate(ThreadLocalRandom.current().nextBoolean() ? SteuerIdMode.CLASSIC : SteuerIdMode.V2016);
 	}
 
 	public String generate(SteuerIdMode mode) {
-		List<String> availableDigits = new ArrayList<>(Arrays.asList(DIGITS));
-		List<String> idDigits = new ArrayList<>();
+		List<Digit> availableDigits = new ArrayList<>(Arrays.asList(DIGITS));
+		List<Digit> idDigits = new ArrayList<>(11);
 
 		// first digit is between 1 and 9 inclusive
 		idDigits.add(availableDigits.get(nextInt(9) + 1));
@@ -25,13 +28,13 @@ public class SteuerIdGenerator {
 
 		// add unique digits
 		for (var i = 0; i < mode.uniqueDigits() - 1; i++) {
-			String next = availableDigits.get(nextInt(availableDigits.size()));
+			Digit next = availableDigits.get(nextInt(availableDigits.size()));
 			idDigits.add(next);
 			availableDigits.remove(next);
 		}
 
 		// pick one existing number to add it according to mode rules
-		String multiOccurenceDigit = idDigits.get(ThreadLocalRandom.current().nextInt(idDigits.size()));
+		Digit multiOccurenceDigit = idDigits.get(ThreadLocalRandom.current().nextInt(idDigits.size()));
 
 		if (mode == SteuerIdMode.CLASSIC) {
 			addClassic(idDigits, multiOccurenceDigit);
@@ -44,7 +47,7 @@ public class SteuerIdGenerator {
 		return idDigits.stream().map(Object::toString).collect(Collectors.joining());
 	}
 
-	void addV2016(List<String> idDigits, String multiOccurenceDigit) {
+	void addV2016(List<Digit> idDigits, Digit multiOccurenceDigit) {
 		// add the first additional occurrence unconditionally
 		addClassic(idDigits, multiOccurenceDigit);
 		// insert the second time avoiding triplets
@@ -63,7 +66,7 @@ public class SteuerIdGenerator {
 		}
 	}
 
-	boolean canInsertAt(int insertPos, String multiOccurenceDigit, List<String> idDigits) {
+	boolean canInsertAt(int insertPos, Digit multiOccurenceDigit, List<Digit> idDigits) {
 		int checkStart = Math.max(0, insertPos - 1);
 		for (var p = checkStart; p < idDigits.size() && p < insertPos + 1; p++) {
 			if (idDigits.get(p).equals(multiOccurenceDigit)) {
@@ -73,10 +76,10 @@ public class SteuerIdGenerator {
 		return true;
 	}
 
-	String checkDigit(List<String> idDigits) {
+	Digit checkDigit(List<Digit> idDigits) {
 		int result = 10;
 		for (int i = 0; i < idDigits.size(); i++) {
-			int sum = (Integer.valueOf(idDigits.get(i)) + result) % 10;
+			int sum = (idDigits.get(i).intValue() + result) % 10;
 			if (sum == 0) {
 				sum = 10;
 			}
@@ -86,10 +89,10 @@ public class SteuerIdGenerator {
 		if (result == 10) {
 			result = 0;
 		}
-		return Integer.toString(result);
+		return DIGITS[result];
 	}
 
-	private void addClassic(List<String> idDigits, String multiOccurenceDigit) {
+	private void addClassic(List<Digit> idDigits, Digit multiOccurenceDigit) {
 		// insert multiOccurenceDigit anywhere after the first digit
 		idDigits.add(1 + nextInt(idDigits.size() - 1), multiOccurenceDigit);
 	}

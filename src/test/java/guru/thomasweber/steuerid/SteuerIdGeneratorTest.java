@@ -1,5 +1,7 @@
 package guru.thomasweber.steuerid;
 
+import static guru.thomasweber.steuerid.Digit.digit;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -94,17 +96,17 @@ class SteuerIdGeneratorTest {
 			// then
 			var digits = stringToList(id.substring(0, 10));
 			var computedChecksum = generator.checkDigit(digits);
-			assertEquals(computedChecksum, id.substring(10));
+			assertEquals(computedChecksum, digit(id.substring(10)));
 		}
 	}
 
 	static Stream<Arguments> checksumValueSource() {
-		return Stream.of(Arguments.of("0794", "5"));
+		return Stream.of(Arguments.of("0794", digit(5)));
 	}
 
 	@ParameterizedTest
 	@MethodSource(value = "checksumValueSource")
-	void test_checksum_computes_correctly(String digitString, String checksum) {
+	void test_checksum_computes_correctly(String digitString, Digit checksum) {
 		// given
 		var generator = new SteuerIdGenerator();
 		// when
@@ -113,10 +115,10 @@ class SteuerIdGeneratorTest {
 		assertEquals(checksum, computedChecksum);
 	}
 
-	private ArrayList<String> stringToList(String digitString) {
-		var digits = new ArrayList<String>();
+	private ArrayList<Digit> stringToList(String digitString) {
+		var digits = new ArrayList<Digit>();
 		for (int i = 0; i < digitString.length(); i++) {
-			digits.add(digitString.substring(i, i + 1));
+			digits.add(digit(digitString.substring(i, i + 1)));
 		}
 		return digits;
 	}
