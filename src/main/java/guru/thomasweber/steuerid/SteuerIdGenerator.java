@@ -21,9 +21,10 @@ public class SteuerIdGenerator {
 		List<Digit> idDigits = new ArrayList<>(11);
 
 		// first digit is between 1 and 9 inclusive
-		idDigits.add(availableDigits.get(nextInt(9) + 1));
+		final Digit first = availableDigits.get(nextInt(9) + 1);
+		idDigits.add(first);
 		// remove first chosen digit from available digits
-		availableDigits.remove(idDigits.get(0));
+		availableDigits.remove(first);
 
 		// add unique digits
 		for (var i = 0; i < mode.uniqueDigits() - 1; i++) {
