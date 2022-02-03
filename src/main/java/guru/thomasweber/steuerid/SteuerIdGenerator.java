@@ -3,7 +3,6 @@ package guru.thomasweber.steuerid;
 import static guru.thomasweber.steuerid.Digit.digit;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ public class SteuerIdGenerator {
 	}
 
 	public String generate(SteuerIdMode mode) {
-		List<Digit> availableDigits = new ArrayList<>(Arrays.asList(DIGITS));
+		List<Digit> availableDigits = Digit.all();
 		List<Digit> idDigits = new ArrayList<>(11);
 
 		// first digit is between 1 and 9 inclusive
