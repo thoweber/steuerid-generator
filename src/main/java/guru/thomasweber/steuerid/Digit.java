@@ -2,6 +2,8 @@ package guru.thomasweber.steuerid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 final class Digit {
 	
@@ -10,23 +12,22 @@ final class Digit {
 
 	private final int intValue;
 	private final String str;
+	private final int hashCode;
 
 	private Digit(int val) {
-		if (val < 0 || val > 9) {
-			throw new IllegalArgumentException("Value must between 0 and 9");
-		}
 		this.intValue = val;
 		this.str = Integer.toString(val);
+		this.hashCode = Objects.hash(val);
 	}
 	
-	public static ArrayList<Digit> all() {
-		return new ArrayList<>(Arrays.asList(DIGITS));
-	}
-	
-	public static Digit of(int v) {
+	private static Digit of(int v) {
 		return new Digit(v);
 	}
 
+	public static List<Digit> all() {
+		return new ArrayList<>(Arrays.asList(DIGITS));
+	}
+	
 	public static Digit digit(int v) {
 		if (v < 0 || v > 9) {
 			throw new IllegalArgumentException("Value must between 0 and 9");
@@ -49,7 +50,7 @@ final class Digit {
 
 	@Override
 	public int hashCode() {
-		return intValue;
+		return hashCode;
 	}
 
 	@Override

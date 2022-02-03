@@ -44,9 +44,6 @@ public class BenchmarkRunner {
 	public static void main(String[] args) throws Exception {
 		Options opt = new OptionsBuilder()
                 .include(BenchmarkRunner.class.getSimpleName())
-                .forks(2)
-                .warmupIterations(2)
-                .measurementIterations(2)
                 .build();
         new Runner(opt).run();
     }
