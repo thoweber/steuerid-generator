@@ -12,6 +12,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import guru.thomasweber.steuerid.SteuerIdGenerator;
+import guru.thomasweber.steuerid.SteuerIdMode;
 
 public class BenchmarkRunner {
 	
@@ -29,8 +30,15 @@ public class BenchmarkRunner {
 	@Benchmark
 	@Fork(value = 1, warmups = 2)
 	@BenchmarkMode(Mode.Throughput)
-	public String generateThroughput(StateObj state) {
-	    return state.generator.generate();
+	public String generateThroughputClassic(StateObj state) {
+	    return state.generator.generate(SteuerIdMode.CLASSIC);
+	}
+	
+	@Benchmark
+	@Fork(value = 1, warmups = 2)
+	@BenchmarkMode(Mode.Throughput)
+	public String generateThroughputV2016(StateObj state) {
+	    return state.generator.generate(SteuerIdMode.V2016);
 	}
 	
 	public static void main(String[] args) throws Exception {

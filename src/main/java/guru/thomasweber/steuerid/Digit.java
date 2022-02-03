@@ -1,11 +1,7 @@
 package guru.thomasweber.steuerid;
 
-import lombok.EqualsAndHashCode;
-
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 final class Digit {
 
-	@EqualsAndHashCode.Include
 	private final int intValue;
 	private final String str;
 
@@ -32,6 +28,28 @@ final class Digit {
 	@Override
 	public String toString() {
 		return str;
+	}
+
+	@Override
+	public int hashCode() {
+		return intValue;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (hashCode() != obj.hashCode()) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		return getClass() == obj.getClass();
 	}
 
 }
