@@ -1,4 +1,4 @@
-# Generator für deutsche steuerliche Identifikationsnummer
+# Generator für deutsche steuerliche Identifikationsnummern
 Auch als **IdNr. oder Steuer-IdNr** bekannt.
 
 ![build status](https://github.com/thoweber/steuerid-generator/actions/workflows/maven.yml/badge.svg) 
@@ -31,7 +31,7 @@ while (steuerIds.size() < 10000) {
 }
 ```
 
-_Generieren in einem bestimmten Format:_
+_Steuerliche Identifikationsnummer in einem bestimmten Format:_
 ```java
 var generator = new SteuerIdGenerator();
 // Format von 2007
