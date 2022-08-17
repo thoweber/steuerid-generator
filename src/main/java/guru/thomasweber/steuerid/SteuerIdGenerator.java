@@ -50,7 +50,7 @@ public final class SteuerIdGenerator {
 		int offset = nextInt(idDigits.size());
 		boolean canInsert = false;
 		do {
-			int insertPos = offset++ % idDigits.size();
+			int insertPos = offset % idDigits.size();
 			offset++;
 			// do not insert at the first position in order to avoid inserting a zero
 			if (insertPos == 0) {
@@ -59,7 +59,6 @@ public final class SteuerIdGenerator {
 			canInsert = canInsertAt(insertPos, multiOccurenceDigit, idDigits);
 			if (canInsert) {
 				idDigits.add(insertPos, multiOccurenceDigit);
-				break;
 			}
 		} while (!canInsert);
 	}
