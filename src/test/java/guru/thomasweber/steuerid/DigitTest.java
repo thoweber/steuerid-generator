@@ -51,5 +51,15 @@ class DigitTest {
 	void hashCode(Digit digit) {
 		assertEquals(Objects.hash(digit.intValue()), digit.hashCode());
 	}
-	
+
+	@Test
+	void internalDigitArrayCannotBeModifiedByList() {
+		// given
+		List<Digit> allDigits = Digit.all();
+		// when
+		allDigits.set(0, Digit.digit(5));
+		// then
+		assertEquals(5, allDigits.get(0).intValue());
+		assertEquals(0, Digit.all().get(0).intValue());
+	}
 }
