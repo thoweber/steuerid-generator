@@ -1,7 +1,5 @@
 package guru.thomasweber.steuerid;
 
-import static guru.thomasweber.steuerid.Digit.digit;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,18 +48,20 @@ public final class SteuerIdGenerator {
 		// insert the second time avoiding triplets
 		// choose an offset and then linearly tryout positions
 		int offset = nextInt(idDigits.size());
-		while (true) {
-			int insertPos = (offset++) % idDigits.size();
+		boolean canInsert = false;
+		do {
+			int insertPos = offset++ % idDigits.size();
+			offset++;
 			// do not insert at the first position in order to avoid inserting a zero
 			if (insertPos == 0) {
 				continue;
 			}
-			boolean canInsert = canInsertAt(insertPos, multiOccurenceDigit, idDigits);
+			canInsert = canInsertAt(insertPos, multiOccurenceDigit, idDigits);
 			if (canInsert) {
 				idDigits.add(insertPos, multiOccurenceDigit);
 				break;
 			}
-		}
+		} while (!canInsert);
 	}
 
 	boolean canInsertAt(int insertPos, Digit multiOccurenceDigit, List<Digit> idDigits) {
