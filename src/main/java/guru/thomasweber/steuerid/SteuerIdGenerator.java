@@ -1,16 +1,11 @@
 package guru.thomasweber.steuerid;
 
-import static guru.thomasweber.steuerid.Digit.digit;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public class SteuerIdGenerator {
-
-	private static final Digit[] DIGITS = { digit(0), digit(1), digit(2), digit(3), digit(4), digit(5), digit(6),
-			digit(7), digit(8), digit(9) };
+public final class SteuerIdGenerator {
 
 	public String generate() {
 		return generate(ThreadLocalRandom.current().nextBoolean() ? SteuerIdMode.CLASSIC : SteuerIdMode.V2016);
@@ -21,7 +16,7 @@ public class SteuerIdGenerator {
 		List<Digit> idDigits = new ArrayList<>(11);
 
 		// first digit is between 1 and 9 inclusive
-		final Digit first = availableDigits.get(nextInt(9) + 1);
+		final Digit first = Digit.digit(nextInt(9) + 1);
 		idDigits.add(first);
 		// remove first chosen digit from available digits
 		availableDigits.remove(first);
@@ -34,7 +29,7 @@ public class SteuerIdGenerator {
 		}
 
 		// pick one existing number to add it according to mode rules
-		Digit multiOccurenceDigit = idDigits.get(ThreadLocalRandom.current().nextInt(idDigits.size()));
+		Digit multiOccurenceDigit = idDigits.get(nextInt(idDigits.size()));
 
 		if (mode == SteuerIdMode.CLASSIC) {
 			addClassic(idDigits, multiOccurenceDigit);
@@ -53,17 +48,19 @@ public class SteuerIdGenerator {
 		// insert the second time avoiding triplets
 		// choose an offset and then linearly tryout positions
 		int offset = nextInt(idDigits.size());
-		for (var i = 0; idDigits.size() < 10; i++) {
-			int insertPos = (offset + i) % idDigits.size();
+		boolean canInsert = false;
+		do {
+			int insertPos = offset % idDigits.size();
+			offset++;
 			// do not insert at the first position in order to avoid inserting a zero
 			if (insertPos == 0) {
 				continue;
 			}
-			boolean canInsert = canInsertAt(insertPos, multiOccurenceDigit, idDigits);
+			canInsert = canInsertAt(insertPos, multiOccurenceDigit, idDigits);
 			if (canInsert) {
 				idDigits.add(insertPos, multiOccurenceDigit);
 			}
-		}
+		} while (!canInsert);
 	}
 
 	boolean canInsertAt(int insertPos, Digit multiOccurenceDigit, List<Digit> idDigits) {
@@ -76,7 +73,7 @@ public class SteuerIdGenerator {
 		return true;
 	}
 
-	Digit checkDigit(List<Digit> idDigits) {
+	public Digit checkDigit(List<Digit> idDigits) {
 		int result = 10;
 		for (int i = 0; i < idDigits.size(); i++) {
 			int sum = (idDigits.get(i).intValue() + result) % 10;
@@ -89,7 +86,7 @@ public class SteuerIdGenerator {
 		if (result == 10) {
 			result = 0;
 		}
-		return DIGITS[result];
+		return Digit.digit(result);
 	}
 
 	private void addClassic(List<Digit> idDigits, Digit multiOccurenceDigit) {
